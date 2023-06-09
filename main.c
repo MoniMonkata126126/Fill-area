@@ -107,47 +107,57 @@ struct pixel** fill_area(struct pixel** img, int row, int column, int last_row, 
 }
 
 
-int main(){
+int main(int argc, char** argv){
 
-    //This main is made for testing purposes
-    int matrix[4][12] = {{1, 2, 3, 234, 243, 255, 2, 35, 64, 255, 255, 255},
-                {1, 2, 3, 234, 243, 255, 2, 35, 64, 255, 255, 255},
-                {1, 2, 3, 234, 243, 255, 2, 35, 64, 255, 255, 255},
-                {1, 2, 3, 234, 243, 255, 2, 35, 64, 255, 255, 255}};
+    int last_row, last_column, row, column;
+    FILE* fp;
+    fp = fopen(argv[2], "r");
 
-    struct pixel** img = (struct pixel**)malloc(sizeof(struct pixel*)*4);
-    for(int i = 0; i < 4; i++){
-        img[i] = (struct pixel*)malloc(sizeof(struct pixel)*4);
+    fscanf(fp, "%d, %c, %d", last_row, NULL, last_column);
+
+    struct pixel** img = (struct pixel**)malloc(sizeof(struct pixel*)*last_row);
+    for(int i = 0; i < last_row; i++){
+        img[i] = (struct pixel*)malloc(sizeof(struct pixel)*last_column);
     }
 
-    for(int i = 0; i < 4; i++){
-        for(int j = 0, k = 0; j < 4; j++){
-            img[i][j].R = matrix[i][k++];
-            img[i][j].G = matrix[i][k++];
-            img[i][j].B = matrix[i][k++];
+    for(int i = 0; i < last_row; i++){
+        for(int j = 0; j < last_column; j++){
+            fscanf(fp, "%u", img[i][j].R);
+            fscanf(fp, "%c", NULL);
+            fscanf(fp, "%u", img[i][j].G );
+            fscanf(fp, "%c", NULL);
+            fscanf(fp, "%u", img[i][j].B);
             img[i][j].is_visited = 0;
         }
     }
 
-    for(int i = 0; i < 4; i++){
-        for(int j = 0, k = 0; j < 4; j++){
-            printf("%d:",img[i][j].R);
-            printf("%d:",img[i][j].G);
-            printf("%d ",img[i][j].B);
+    fclose(fp);
+
+    printf("Give row of pixel: ");
+    scanf("%d", &row);
+    printf("Give column of pixel: ");
+    scanf("%d", &column);
+
+    img = fill_area(img, row, column, last_row, last_column);
+
+    FILE* ft;
+    ft = fopen(argv[2], "w");
+
+    fprintf(ft, "%d, %c, %d", last_row, ":", last_column);
+
+    for(int i = 0; i < last_row; i++){
+        for(int j = 0; j < last_column; j++){
+            fprintf(fp, "%u", img[i][j].R);
+            fprintf(fp, "%c", ":");
+            fprintf(fp, "%u", img[i][j].G);
+            fprintf(fp, "%c", ":");
+            fprintf(fp, "%u", img[i][j].B);
+            fprintf(fp, "%c", 32);
         }
-        printf("\n");
+        fprintf(ft, "\n");
     }
 
-    img = fill_area(img, 2, 3, 4, 4);
-
-    for(int i = 0; i < 4; i++){
-        for(int j = 0, k = 0; j < 4; j++){
-            printf("%d:",img[i][j].R);
-            printf("%d:",img[i][j].G);
-            printf("%d ",img[i][j].B);
-        }
-        printf("\n");
-    }
+    fclose(ft);
 
     return 0;
 }
